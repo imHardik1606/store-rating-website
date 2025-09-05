@@ -2,11 +2,16 @@ const { promisePool } = require('../config/database');
 
 class Rating {
   static async create(ratingData) {
-    const { user_id, store_id, rating } = ratingData;
+    const { user_id, store_id, rating, comment } = ratingData;
     
     const [result] = await promisePool.execute(
-      'INSERT INTO ratings (user_id, store_id, rating) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE rating = VALUES(rating), updated_at = CURRENT_TIMESTAMP',
-      [user_id, store_id, rating]
+      `INSERT INTO ratings (user_id, store_id, rating, comment) 
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE 
+         rating = VALUES(rating), 
+         comment = VALUES(comment), 
+         updated_at = CURRENT_TIMESTAMP`,
+      [user_id, store_id, rating, comment]
     );
     
     return result.insertId || result.affectedRows;
@@ -33,4 +38,4 @@ class Rating {
   }
 }
 
-module.exports = Rating;
+module.exports = Rating;   // 👈 don’t forget this!

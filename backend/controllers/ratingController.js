@@ -8,14 +8,14 @@ const submitRating = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { store_id, rating } = req.body;
+    const { store_id, rating, comment } = req.body;
     const user_id = req.user.id;
 
-    const ratingId = await Rating.create({ user_id, store_id, rating });
+    const ratingId = await Rating.create({ user_id, store_id, rating, comment });
 
     res.status(201).json({
       message: 'Rating submitted successfully',
-      rating: { id: ratingId, user_id, store_id, rating }
+      rating: { id: ratingId, user_id, store_id, rating, comment }
     });
   } catch (error) {
     console.error('Submit rating error:', error);
