@@ -9,26 +9,62 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize user from localStorage
   useEffect(() => {
+    console.log("🔍 AuthContext: Initializing...");
+    
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
+    
+    console.log("🔍 AuthContext: Token exists:", !!token);
+    console.log("🔍 AuthContext: UserData exists:", !!userData);
+    console.log("🔍 AuthContext: Raw userData:", userData);
 
     if (token && userData) {
       try {
-        setUser(JSON.parse(userData));
+        const parsedUser = JSON.parse(userData);
+        console.log("🔍 AuthContext: Parsed user:", parsedUser);
+        console.log("🔍 AuthContext: User role:", parsedUser?.role);
+        
+        // ✅ Validate that user object has required properties
+        if (parsedUser && typeof parsedUser === 'object' && parsedUser.role) {
+          setUser(parsedUser);
+          console.log("✅ AuthContext: Valid user data loaded");
+        } else {
+          console.log("❌ AuthContext: Invalid user data - missing role or empty object");
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+        }
       } catch (error) {
-        console.error("Error parsing user data:", error);
+        console.error("❌ AuthContext: Error parsing user data:", error);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        setUser(null);
       }
+    } else {
+      console.log("🔍 AuthContext: No token or userData found");
     }
+    
     setLoading(false);
+    console.log("🔍 AuthContext: Loading set to false");
   }, []);
+
+  // Debug user state changes
+  useEffect(() => {
+    console.log("🔍 AuthContext: User state changed:", user);
+    console.log("🔍 AuthContext: Loading state:", loading);
+  }, [user, loading]);
 
   // Login API call
   const login = async (email, password) => {
+    console.log("🔍 AuthContext: Login attempt for:", email);
     try {
       const response = await authAPI.login(email, password);
+      console.log("🔍 AuthContext: Login response:", response);
+      
       const { user, token } = response;
+      
+      console.log("🔍 AuthContext: Login user data:", user);
+      console.log("🔍 AuthContext: Login token:", !!token);
 
       // Save in localStorage
       localStorage.setItem("token", token);
@@ -39,6 +75,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, user };
     } catch (error) {
+      console.error("❌ AuthContext: Login error:", error);
       return {
         success: false,
         error: error.response?.data?.message || "Login failed",
@@ -46,8 +83,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Optional: manual login update (after login)  
+  // Optional: manual login update (after login)
   const loginUpdate = (token, role) => {
+    console.log("🔍 AuthContext: Manual login update - role:", role);
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify({ role }));
     setUser({ role });
@@ -55,22 +93,27 @@ export const AuthProvider = ({ children }) => {
 
   // Logout
   const logout = async () => {
+    console.log("🔍 AuthContext: Logout called");
     try {
       await authAPI.logout();
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("❌ AuthContext: Logout error:", error);
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       setUser(null);
+      console.log("🔍 AuthContext: Logout complete");
     }
   };
 
   // Register
   const register = async (userData) => {
+    console.log("🔍 AuthContext: Register attempt");
     try {
       const response = await authAPI.register(userData);
       const { user, token } = response;
+
+      console.log("🔍 AuthContext: Register user data:", user);
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
@@ -78,6 +121,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, user };
     } catch (error) {
+      console.error("❌ AuthContext: Register error:", error);
       return {
         success: false,
         error: error.response?.data?.message || "Registration failed",
