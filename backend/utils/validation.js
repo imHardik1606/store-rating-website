@@ -19,7 +19,7 @@ const userValidation = [
     .withMessage("Email must not exceed 255 characters"),
 
   body("password")
-    .isLength({ min: 8, max: 16 })
+    .isLength({ min: 3, max: 16 })
     .withMessage("Password must be between 8 and 16 characters")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
     .withMessage(

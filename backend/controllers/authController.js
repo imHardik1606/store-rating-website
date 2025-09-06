@@ -19,7 +19,7 @@ const register = async (req, res) => {
       });
     }
 
-    const { name, email, password, address } = req.body;
+    const { name, email, password, address, role } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findByEmail(email);
@@ -30,8 +30,18 @@ const register = async (req, res) => {
       });
     }
 
-    // Create user with 'user' role (default)
-    const userId = await User.create({ name, email, password, address, role: 'user' });
+    // Role validation → only allow "user" or "owner"
+    const validRoles = ["user", "owner"];
+    const assignedRole = validRoles.includes(role) ? role : "user";
+
+    // Create user with chosen role
+    const userId = await User.create({ 
+      name, 
+      email, 
+      password, 
+      address, 
+      role: assignedRole 
+    });
     
     // Generate token
     const token = generateToken(userId);
@@ -46,7 +56,7 @@ const register = async (req, res) => {
         name, 
         email, 
         address, 
-        role: 'user' 
+        role: assignedRole 
       }
     });
   } catch (error) {
@@ -66,6 +76,7 @@ const register = async (req, res) => {
     });
   }
 };
+
 
 // User login (public route)
 const login = async (req, res) => {

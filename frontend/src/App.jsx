@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./hooks/useAuth"
-import { AuthProvider } from "./context/AuthContext"
+import { useAuth } from "./context/AuthContext"; // ✅ Fix import to point to AuthContext
+import { AuthProvider } from "./context/AuthContext";
 
 // Pages & Components
 import Login from "./components/auth/LoginForm";
@@ -10,6 +10,7 @@ import AdminDashboard from "./components/admin/Dashboard";
 import StoreListPage from "./components/user/StoresList";
 import OwnerDashboard from "./components/store/StoreDashboard";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "react-hot-toast";
 
 // 🔒 Protected Route Component
 function ProtectedRoute({ children, roles }) {
@@ -92,6 +93,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
+      <Toaster position="top-right" toastOptions={{ className: "rounded-xl shadow-lg" }} />
     </AuthProvider>
   );
 }

@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 class User {
   static async create(userData) {
-    const { name, email, password, address, role = 'user' } = userData;
+    const { name, email, password, address, role } = userData;
     const hashedPassword = await bcrypt.hash(password, 12);
     
     const [result] = await promisePool.execute(
