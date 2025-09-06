@@ -1,13 +1,14 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import AuthProvider, { useAuth } from "./context/AuthContext";
+import { useAuth } from "./hooks/useAuth"
+import { AuthProvider } from "./context/AuthContext"
 
 // Pages & Components
 import Login from "./components/auth/LoginForm";
 import Signup from "./components/auth/RegisterForm";
 import AdminDashboard from "./components/admin/Dashboard";
-import StoreListPage from "./components/store/StoreListPage";
-import OwnerDashboard from "./pages/OwnerDashboard";
+import StoreListPage from "./components/user/StoresList";
+import OwnerDashboard from "./components/store/StoreDashboard";
 import NotFound from "./pages/NotFound";
 
 // 🔒 Protected Route Component
